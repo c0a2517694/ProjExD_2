@@ -28,6 +28,11 @@ def check_bound(rct: pg.Rect) -> tuple[bool, bool]:
     return yoko, tate
 
 def gameover(screen: pg.Surface) -> None:
+    """
+    引数：画面Surface
+    戻り値：なし
+    ゲームオーバーになった場合、ゲームオーバー画面を表示
+    """
     go_img = pg.Surface((WIDTH, HEIGHT))
     go_rct = go_img.get_rect()
     go_img.set_alpha(200)
@@ -46,6 +51,11 @@ def gameover(screen: pg.Surface) -> None:
     return
 
 def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
+    """
+    引数：なし
+    戻り値：pg.Surfaceが入ったリストが入ったタプル、整数のリスト
+    時間とともに爆弾が拡大,加速する関数
+    """
     bb_imgs = []
     bb_accs =[a for a in range(1,11)]
     for r in list(range(1,11)):
@@ -55,6 +65,11 @@ def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
     return bb_imgs, bb_accs  
 
 def get_kk_imgs() -> dict[tuple[int, int], pg.Surface]:
+    """
+    引数：なし
+    戻り値：押下キーに対する移動量の合計値タプルをキー,rotozoomしたSurfaceを値とした辞書
+    飛ぶ方向に従ってこうかとん画像を切り替える関数
+    """
     kk_dict = {
         (0, 0):pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 1),
         (0, -5):pg.transform.rotozoom(pg.transform.flip(pg.image.load("fig/3.png"), True, False), 90, 1),
