@@ -7,10 +7,10 @@ import pygame as pg
 
 WIDTH, HEIGHT = 1100, 650
 DELTA = {
-    pg.K_UP:(0,-5),
-    pg.K_DOWN:(0,5),
-    pg.K_LEFT:(-5,0),
-    pg.K_RIGHT:(5,0),
+    pg.K_UP:(0, -5),
+    pg.K_DOWN:(0, 5),
+    pg.K_LEFT:(-5, 0),
+    pg.K_RIGHT:(5, 0),
 }
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
@@ -37,7 +37,7 @@ def gameover(screen: pg.Surface) -> None:
     go_rct = go_img.get_rect()
     go_img.set_alpha(200)
     fonto = pg.font.Font(None, 60)
-    go_txt = fonto.render("Game Over", True, (255,255,255))
+    go_txt = fonto.render("Game Over", True, (255, 255, 255))
     txt_rct = go_txt.get_rect(center=(WIDTH // 2, HEIGHT // 2 ))
     cry_kk_img = pg.image.load("fig/8.png")
     cry_kk_rctR = cry_kk_img.get_rect(center=(WIDTH // 2 + 150, HEIGHT // 2 ))
@@ -57,8 +57,8 @@ def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
     時間とともに爆弾が拡大,加速する関数
     """
     bb_imgs = []
-    bb_accs =[a for a in range(1,11)]
-    for r in list(range(1,11)):
+    bb_accs =[a for a in range(1, 11)]
+    for r in list(range(1, 11)):
         bb_img = pg.Surface((20*r, 20*r))  
         pg.draw.circle(bb_img, (255, 0, 0), (10*r, 10*r), 10*r)  
         bb_imgs.append(bb_img)
@@ -91,8 +91,8 @@ def main():
     kk_rct = kk_img.get_rect()
     kk_rct.center = 300, 200
 
-    bb_img = pg.Surface((20,20))
-    pg.draw.circle(bb_img, (255,0,0), (10,10), 10)
+    bb_img = pg.Surface((20, 20))
+    pg.draw.circle(bb_img, (255, 0, 0), (10, 10), 10)
     bb_img.set_colorkey((0, 0, 0))
     bb_rct = bb_img.get_rect()
     bb_rct.center = random.randint(0, WIDTH), random.randint(0, HEIGHT)
