@@ -1,6 +1,7 @@
 import os
 import random
 import sys
+import time
 import pygame as pg
 
 
@@ -26,6 +27,49 @@ def check_bound(rct: pg.Rect) -> tuple[bool, bool]:
         tate = False
     return yoko, tate
 
+def gameover(screen: pg.Surface) -> None:
+    go_img = pg.Surface((WIDTH, HEIGHT))
+    go_rct = go_img.get_rect()
+    go_img.set_alpha(200)
+    fonto = pg.font.Font(None, 60)
+    go_txt = fonto.render("Game Over", True, (255,255,255))
+    txt_rct = go_txt.get_rect(center=(WIDTH // 2, HEIGHT // 2 ))
+    cry_kk_img = pg.image.load("fig/8.png")
+    cry_kk_rctR = cry_kk_img.get_rect(center=(WIDTH // 2 + 150, HEIGHT // 2 ))
+    cry_kk_rctL = cry_kk_img.get_rect(center=(WIDTH // 2 - 150, HEIGHT // 2 ))
+    go_img.blit(cry_kk_img, cry_kk_rctR)
+    go_img.blit(cry_kk_img, cry_kk_rctL)
+    go_img.blit(go_txt, txt_rct)
+    screen.blit(go_img, go_rct)
+    pg.display.update()
+    time.sleep(5)
+    return
+
+def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
+    bb_imgs = []
+    bb_accs = []
+    for r in list(range(1,11)):
+        bb_img = pg.Surface((20, 20))  
+        pg.draw.circle(bb_img, (255, 0, 0), (10*r, 10*r), 10*r)  
+        bb_imgs.append(bb_img)
+        bb_accs =[a for a in range(1,11)]
+    return bb_imgs, bb_accs  
+
+def get_kk_imgs() -> dict[tuple[int, int], pg.Surface]:
+    kk_dict = {
+        (0, 0):pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 1),
+        (0, -5):pg.transform.rotozoom(pg.image.load("fig/3.png"), 270, 1),
+        (0, +5):pg.transform.rotozoom(pg.image.load("fig/3.png"), 90, 1),
+        (-5, 0):pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 1),
+        (+5, 0):pg.transform.rotozoom(pg.image.load("fig/3.png"), 180, 1),
+        (-5, -5):pg.transform.rotozoom(pg.image.load("fig/3.png"), 315, 1),
+        (+5, -5):pg.transform.rotozoom(pg.image.load("fig/3.png"), 225, 1),
+        (-5, +5):pg.transform.rotozoom(pg.image.load("fig/3.png"), 45, 1),
+        (+5, +5):pg.transform.rotozoom(pg.image.load("fig/3.png"), 135, 1)
+        
+        }  
+    return kk_dict
+
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -48,6 +92,7 @@ def main():
             if event.type == pg.QUIT: 
                 return
         if kk_rct.colliderect(bb_rct):
+            gameover(screen)
             print("ゲームオーバー")
             return
         screen.blit(bg_img, [0, 0]) 
