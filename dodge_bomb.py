@@ -47,26 +47,24 @@ def gameover(screen: pg.Surface) -> None:
 
 def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
     bb_imgs = []
-    bb_accs = []
+    bb_accs =[a for a in range(1,11)]
     for r in list(range(1,11)):
-        bb_img = pg.Surface((20, 20))  
+        bb_img = pg.Surface((20*r, 20*r))  
         pg.draw.circle(bb_img, (255, 0, 0), (10*r, 10*r), 10*r)  
         bb_imgs.append(bb_img)
-        bb_accs =[a for a in range(1,11)]
     return bb_imgs, bb_accs  
 
 def get_kk_imgs() -> dict[tuple[int, int], pg.Surface]:
     kk_dict = {
         (0, 0):pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 1),
-        (0, -5):pg.transform.rotozoom(pg.image.load("fig/3.png"), 270, 1),
+        (0, -5):pg.transform.rotozoom(pg.transform.flip(pg.image.load("fig/3.png"), True, False), 90, 1),
         (0, +5):pg.transform.rotozoom(pg.image.load("fig/3.png"), 90, 1),
         (-5, 0):pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 1),
-        (+5, 0):pg.transform.rotozoom(pg.image.load("fig/3.png"), 180, 1),
+        (+5, 0):pg.transform.flip(pg.image.load("fig/3.png"), True, False),
         (-5, -5):pg.transform.rotozoom(pg.image.load("fig/3.png"), 315, 1),
         (+5, -5):pg.transform.rotozoom(pg.image.load("fig/3.png"), 225, 1),
         (-5, +5):pg.transform.rotozoom(pg.image.load("fig/3.png"), 45, 1),
         (+5, +5):pg.transform.rotozoom(pg.image.load("fig/3.png"), 135, 1)
-        
         }  
     return kk_dict
 
@@ -84,9 +82,12 @@ def main():
     bb_rct = bb_img.get_rect()
     bb_rct.center = random.randint(0, WIDTH), random.randint(0, HEIGHT)
     vx, vy = +5,+5
-
     clock = pg.time.Clock()
+    
     tmr = 0
+    bb_imgs, bb_accs =init_bb_imgs()
+    kk_dict = get_kk_imgs()
+
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT: 
@@ -97,16 +98,14 @@ def main():
             return
         screen.blit(bg_img, [0, 0]) 
 
+        avx = vx * bb_accs[min(tmr//500, 9)]
+        avy = vy * bb_accs[min(tmr//500, 9)]
+        bb_img = bb_imgs[min(tmr//500, 9)] 
+        bb_img.set_colorkey((0, 0, 0))
+
         key_lst = pg.key.get_pressed()
         sum_mv = [0, 0]
-        # if key_lst[pg.K_UP]:
-        #     sum_mv[1] -= 5
-        # if key_lst[pg.K_DOWN]:
-        #     sum_mv[1] += 5
-        # if key_lst[pg.K_LEFT]:
-        #     sum_mv[0] -= 5
-        # if key_lst[pg.K_RIGHT]:
-        #     sum_mv[0] += 5
+
         for key, mv in DELTA.items():
             if key_lst[key]:
                 sum_mv[0] += mv[0]
@@ -115,8 +114,12 @@ def main():
         if check_bound(kk_rct) != (True,True):
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1])
         screen.blit(kk_img, kk_rct)
+        
+        bb_rct.move_ip(avx,avy)
+        bb_rct.width=bb_imgs[min(tmr//500, 9)].get_rect().width 
+        bb_rct.height=bb_imgs[min(tmr//500, 9)].get_rect().height 
+        kk_img = kk_dict.get(tuple(sum_mv), kk_dict[(0, 0)])
 
-        bb_rct.move_ip(vx,vy)
         yoko, tate =check_bound(bb_rct)
         if not yoko:
             vx *= -1
